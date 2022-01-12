@@ -72,14 +72,23 @@ class App extends React.Component {
       address_line_2: '',
       city: '',
       state: '',
-      zip_code: ''
+      zip_code: '',
+      edit_mode: true
     };
-    temp.edit_mode = true;
     this.setState({ displayAddresses: this.state.displayAddresses.concat(temp) });
   }
 
+  removeAddressCard(index) {
+    const result = this.state.displayAddresses.slice(0, index).concat(this.state.displayAddresses.slice(index + 1));
+    this.setState({ displayAddresses: result })
+  }
+
+  addAddress(index) {
+    this.setState({ addresses: this.state.addresses.concat(this.state.displayAddresses[index]) });
+  }
+
   renderAddresses() {
-    const htmlOut = this.state.displayAddresses.map((address) => {
+    const htmlOut = this.state.displayAddresses.map((address, index) => {
       return (
         <AddressCard key={address.id}
           id={address.id}
@@ -90,6 +99,8 @@ class App extends React.Component {
           state={address.state}
           zip_code={address.zip_code}
           edit_mode={address.edit_mode}
+          onCancelNew={() => { this.removeAddressCard(index)}}
+          onSaveNew={() => { this.addAddress(index) }}
         />
       );      
     });
@@ -145,7 +156,7 @@ class AddressCard extends React.Component {
       city: props.city, 
       state: props.state,
       zip_code: props.zip_code,
-      edit_mode: false,
+      edit_mode: props.edit_mode,
       undoAddress: undefined  
     }
 
@@ -188,6 +199,7 @@ class AddressCard extends React.Component {
           // const response = JSON.parse(xhr.responseText);
           // probably should do something with the response
           self.setState({ edit_mode: false });
+          this.props.onSaveNew();
         }
       }
       xhr.send(JSON.stringify({ 
@@ -234,16 +246,20 @@ class AddressCard extends React.Component {
   }
   
   onCancelButton() {
-    this.setState({ 
-      id: this.state.undoAddress.id,
-      address_name: this.state.undoAddress.address_name,
-      address_line_1: this.state.undoAddress.address_line_1,
-      address_line_2: this.state.undoAddress.address_line_2,
-      city: this.state.undoAddress.city, 
-      state: this.state.undoAddress.state,
-      zip_code: this.state.undoAddress.zip_code,
-      edit_mode: false
-    });
+    if (this.state.id !== '') {
+      this.setState({ 
+        id: this.state.undoAddress.id,
+        address_name: this.state.undoAddress.address_name,
+        address_line_1: this.state.undoAddress.address_line_1,
+        address_line_2: this.state.undoAddress.address_line_2,
+        city: this.state.undoAddress.city, 
+        state: this.state.undoAddress.state,
+        zip_code: this.state.undoAddress.zip_code,
+        edit_mode: false
+      });
+    } else {
+      this.props.onCancelNew();
+    }
   }
 
   render() {
