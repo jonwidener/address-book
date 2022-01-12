@@ -1,0 +1,26 @@
+button {
+  background-color: white;
+  border: 1px dashed black;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: lightgray;
+}
+
+button:active {
+  background-color: grey;
+  color: white;
+}
+
+div.address-card {
+  display: inline-block; 
+  border: 1px solid black; 
+  padding: 0.5em; 
+  margin: 0.5em;
+}
+
+span.address-label {
+  display: inline-block;
+  width: 10em;
+}
